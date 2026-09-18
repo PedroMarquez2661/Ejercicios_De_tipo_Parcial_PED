@@ -1,0 +1,128 @@
+===============================================================================
+               APUNTES Y CHEAT SHEET PARA EL PARCIAL DE C++
+===============================================================================
+
+1. ESTRUCTURAS (struct)
+-------------------------------------------------------------------------------
+* Permiten agrupar variables de diferentes tipos en una sola unidad.
+* Sin <string>, se usan arreglos de caracteres: char nombre[tamano];
+
+Ejemplo de declaración e instanciación:
+struct Producto {
+    int id;
+    char nombre[30];
+    float precio;
+    int stock;
+};
+
+// Instanciación directa:
+Producto p1 = {1, "Guantes BJJ", 45.0f, 10};
+
+// Acceso a campos (Objeto normal):
+p1.stock -= 1; // Usamos el operador punto (.)
+
+-------------------------------------------------------------------------------
+2. PUNTEROS Y ACCESO A MEMORIA
+-------------------------------------------------------------------------------
+* Puntero (*): Variable que almacena una dirección de memoria.
+* Dirección (&): Devuelve la ubicación en memoria de una variable.
+* Flecha (->): Se usa para acceder a los campos de una struct a través de un PUNTERO.
+
+int numero = 10;
+int* ptr = &numero;     // 'ptr' guarda la dirección de 'numero'
+*ptr = 20;              // Cambia el valor de 'numero' a 20 (desreferenciación)
+
+Producto prod = {1, "Protector", 15.0f, 5};
+Producto* ptrProd = &prod;
+ptrProd->stock = 4;     // Es idéntico a poner (*ptrProd).stock = 4
+
+-------------------------------------------------------------------------------
+3. MEMORIA DINÁMICA (new, delete, nullptr)
+-------------------------------------------------------------------------------
+* new: Solicita memoria en el Heap durante la ejecución.
+* delete: Libera la memoria reservada para evitar fugas (Memory Leaks).
+* nullptr: Inicializa/limpia punteros que no apuntan a nada válido.
+
+// Variable simple dinámica:
+int* pEdad = new int;
+*pEdad = 25;
+delete pEdad;
+pEdad = nullptr; // Buena práctica
+
+// Arreglo dinámico (tamaño elegido en tiempo de ejecución):
+int tamano;
+cin >> tamano;
+int* arregloDinamico = new int[tamano];
+
+// Recorrido de arreglo dinámico:
+for(int i = 0; i < tamano; i++) {
+    arregloDinamico[i] = i * 2;
+}
+
+// Liberación obligatoria de arreglos dinámicos:
+delete[] arregloDinamico; 
+arregloDinamico = nullptr;
+
+-------------------------------------------------------------------------------
+4. PASO DE PARÁMETROS EN FUNCIONES VOID
+-------------------------------------------------------------------------------
+A) Paso por VALOR: Copia el dato. Los cambios dentro de la función NO afectan al main.
+   void modificar(int x) { x = 100; }
+
+B) Paso por REFERENCIA (&): Pasa la variable original. Los cambios SÍ afectan al main.
+   void modificar(int &x) { x = 100; }
+
+C) Paso por PUNTERO (*): Pasa la dirección de memoria. Requiere & al llamar la función.
+   void modificar(int* x) { *x = 100; }
+   // Llamada desde main: modificar(&variable);
+
+D) Arreglos en Funciones: Se pasan automáticamente como punteros implícitos.
+   void procesarArreglo(Producto tienda[], int tam) { ... }
+   // Es exactamente igual a:
+   void procesarArreglo(Producto* tienda, int tam) { ... }
+
+-------------------------------------------------------------------------------
+5. MATRICES DE DOS DIMENSIONES (Arreglos Bidimensionales)
+-------------------------------------------------------------------------------
+* Declaración: Tipo nombre[Filas][Columnas];
+* Inicialización en cero: int matriz[3][5] = {0};
+
+int matrizVentas[3][5]; // 3 filas (productos) x 5 columnas (días)
+
+// Recorrido con bucles anidados:
+for (int f = 0; f < 3; f++) {
+    for (int c = 0; c < 5; c++) {
+        matrizVentas[f][c] = 0; // Asignación por coordenada
+    }
+}
+
+// Paso de matriz a funciones (Obligatorio especificar el número de COLUMNAS):
+void mostrarMatriz(const int m[3][5]) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 5; j++) {
+            cout << m[i][j] << "\t";
+        }
+        cout << endl;
+    }
+}
+
+-------------------------------------------------------------------------------
+6. VALIDACIONES Y RETURN DEFENSIVO EN FUNCIONES VOID
+-------------------------------------------------------------------------------
+Usar 'return;' dentro de una función void interrumpe la ejecución si los datos
+ingresados son incorrectos, evitando que el programa se caiga.
+
+void registrarVenta(int id, int cantidad, int stockActual) {
+    // Validar rangos o límites
+    if (id < 0 || id >= 3) {
+        cout << "Error: ID no existe." << endl;
+        return; // Sale de la función de inmediato
+    }
+
+    if (cantidad <= 0 || cantidad > stockActual) {
+        cout << "Error: Stock insuficiente." << endl;
+        return; // Sale de la función de inmediato
+    }
+
+    // Código principal si todo está correcto...
+}

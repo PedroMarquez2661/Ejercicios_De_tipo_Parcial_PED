@@ -1,0 +1,100 @@
+===============================================================================
+                     GUÍA RÁPIDA DE COMANDOS GIT Y ERRORES
+===============================================================================
+
+1. CONFIGURACIÓN Y ESTADO INICIAL
+-------------------------------------------------------------------------------
+git status                         # Ver el estado actual del repositorio
+git log --oneline --graph --all    # Ver el historial de commits resumido y en gráfico
+
+2. GUARDAR CAMBIOS (STAGING Y COMMIT)
+-------------------------------------------------------------------------------
+git add .                          # Preparar todos los archivos modificados de la carpeta actual
+git add <archivo>                  # Preparar un archivo específico
+git add ../<carpeta>/              # Preparar una carpeta fuera del directorio actual
+git commit -m "mensaje del commit" # Guardar los cambios preparados
+git commit -am "mensaje"           # Agrega cambios de archivos rastreados y hace commit a la vez
+
+3. TRABAJO CON RAMAS (BRANCHES)
+-------------------------------------------------------------------------------
+git branch                         # Listar ramas locales (* indica la rama actual)
+git branch -a                      # Listar ramas locales y remotas
+git branch <nombre-rama>           # Crear una nueva rama
+git checkout <nombre-rama>         # Cambiar a una rama existente
+git switch <nombre-rama>           # Cambiar a una rama (sintaxis moderna)
+git checkout -b <nombre-rama>      # Crear una rama Y cambiarte a ella de inmediato
+git switch -c <nombre-rama>        # Crear y cambiarte a una rama (sintaxis moderna)
+
+4. ELIMINAR RAMAS
+-------------------------------------------------------------------------------
+git branch -d <nombre-rama>        # Borrar rama local (solo si ya se unió a la principal)
+git branch -D <nombre-rama>        # Forza el borrado de rama local (incluso sin unir)
+git push origin --delete <nombre-rama>  # Borrar una rama en el repositorio remoto (GitHub/GitLab)
+
+5. UNIR RAMAS (MERGE SIN GIT FLOW)
+-------------------------------------------------------------------------------
+# Paso 1: Cambiar a la rama receptora (por ejemplo, main)
+git checkout main
+
+# Paso 2: Traer los cambios de la rama secundaria
+git merge <nombre-rama>
+
+# Paso 3: Borrar la rama secundaria tras la unión (opcional pero recomendado)
+git branch -d <nombre-rama>
+
+6. GUARDAR CAMBIOS TEMPORALES (STASH)
+-------------------------------------------------------------------------------
+git stash                          # Guarda temporalmente cambios no confirmados
+git stash list                     # Ver la lista de cambios guardados en stash
+git stash pop                      # Recupera y aplica los últimos cambios guardados y limpia el stash
+git stash apply                    # Aplica los cambios pero no borra el registro de la lista
+git stash drop                     # Elimina el último elemento guardado en el stash
+
+7. SINCRONIZACIÓN CON EL REPOSITORIO REMOTO
+-------------------------------------------------------------------------------
+git fetch origin                   # Descargar información del remoto sin modificar tus archivos
+git pull origin <nombre-rama>      # Descargar e integrar cambios del remoto
+git push origin <nombre-rama>      # Subir tu rama y commits al repositorio remoto
+git push -u origin <nombre-rama>   # Subir y vincular la rama local con la remota por primera vez
+
+===============================================================================
+                       SOLUCIÓN A ERRORES MÁS COMUNES
+===============================================================================
+
+ERROR 1: "nothing added to commit but untracked files present"
+Causa: Tienes archivos nuevos o fuera de tu carpeta que Git no está rastreando.
+Solución:
+  git add .
+  git commit -m "Se agregan archivos"
+
+ERROR 2: "error: Your local changes to the following files would be overwritten by checkout/merge"
+Causa: Intentas cambiar de rama o hacer merge, pero tienes cambios sin guardar.
+Solución A (Guardar cambios):
+  git add .
+  git commit -m "Guardado previo"
+Solución B (Usar Stash temporal):
+  git stash
+  git checkout <otra-rama>
+  # Al volver:
+  git stash pop
+
+ERROR 3: CONFLICTOS AL UNIR RAMAS ("CONFLICT (content): Merge conflict in <archivo>")
+Causa: La misma línea del mismo archivo fue modificada de forma distinta en ambas ramas.
+Solución:
+  1. Abre el archivo en conflicto (busca las marcas <<<<<<<, =======, >>>>>>>).
+  2. Borra las marcas y deja únicamente el código correcto.
+  3. Ejecuta:
+     git add <archivo-resuelto>
+     git commit -m "Conflicto resuelto"
+
+ERROR 4: "fatal: 'origin' does not appear to be a git repository"
+Causa: No se ha vinculado la carpeta local con GitHub/GitLab.
+Solución:
+  git remote add origin <URL-del-repositorio-git>
+
+ERROR 5: "error: failed to push some refs"
+Causa: Hay cambios en el remoto que no tienes en tu máquina local.
+Solución:
+  git pull origin main
+  # Resuelve conflictos si aparecen, luego:
+  git push origin main

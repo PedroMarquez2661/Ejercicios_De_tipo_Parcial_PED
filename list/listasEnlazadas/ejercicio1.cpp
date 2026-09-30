@@ -1,211 +1,130 @@
-#include<iostream>
+#include <iostream>
 
-struct Node{
+// Estructura de un nodo en una lista doblemente enlazada
+struct Node {
     int data;
     Node* next;
     Node* prev;
 };
 
-void Insert(Node*& head, int data){
+// PUSH: Inserta al inicio de la lista.
+// Al insertar aquí, este elemento se convierte automáticamente en el "último en haber entrado",
+// por lo que será el "primero en ser eliminado" (comportamiento de Pila/LIFO).
+void Push(Node*& head, int data) {
     Node* new_node = new Node{data, head, nullptr};
 
-    if(head != nullptr){
+    if (head != nullptr) {
         head->prev = new_node;
     }
 
     head = new_node;
+    std::cout << "Elemento " << data << " agregado exitosamente.\n";
 }
 
-void InsertAtEnd(Node*& head, int data){
-    Node* new_node = new Node{data, nullptr, nullptr};
-
-    //Si esto ocurre es porque la lista esta vacia
-    if(head == nullptr){
-        head = new_node;
+// POP: Elimina el último elemento que fue insertado (el que está en la cabeza/inicio).
+void Pop(Node*& head) {
+    // Validación: Si la lista está vacía, no hay nada que eliminar.
+    if (head == nullptr) {
+        std::cout << "La lista esta vacia. No hay elementos para eliminar.\n";
         return;
     }
 
-    //Pero esto pasa si acaso no esta vacia
-    Node* current = head;
+    Node* temp = head;          // Guardamos referencia al nodo a eliminar
+    int removed_value = temp->data;
 
-    while(current->next != nullptr){
-        current = current->next;
+    head = head->next;          // Avanzamos la cabeza al siguiente nodo
+
+    if (head != nullptr) {
+        head->prev = nullptr;   // El nuevo primer nodo ya no tiene elemento anterior
     }
 
-    current->next = new_node;
-    new_node->prev = current;
+    delete temp;                // Liberamos la memoria correctamente
+    std::cout << "Elemento eliminado: " << removed_value << std::endl;
 }
 
-void PrintList(Node* head){
-    Node* current = head;
-
-    while(current != nullptr){
-        std::cout<<current->data<<" -> ";
-        current = current->next;
+// PEEK / TOP: Consulta el próximo elemento a ser eliminado sin modificar la lista.
+void Peek(Node* head) {
+    // Validación: Si la lista está vacía, se notifica al usuario.
+    if (head == nullptr) {
+        std::cout << "La lista esta vacia. No hay un proximo elemento para eliminar.\n";
+        return;
     }
 
-    std::cout<<std::endl;
+    // El próximo elemento a eliminar es siempre el primero (head)
+    std::cout << "El proximo elemento a eliminar es: " << head->data << std::endl;
 }
 
-void PrintlastWorth(Node* head){
-    Node* current = head;
+// Muestra los elementos de la lista desde el más reciente al más antiguo
+void PrintList(Node* head) {
+    if (head == nullptr) {
+        std::cout << "La lista esta vacia." << std::endl;
+        return;
+    }
 
-    while(current != nullptr){
-        std::cout<<current->data<<" -> ";
+    Node* current = head;
+    std::cout << "Estado actual de la lista: ";
+    while (current != nullptr) {
+        std::cout << current->data << " -> ";
         current = current->next;
     }
-
-    std::cout<<std::endl;
-
-    //Para este punto ya estoy al final de la lista
-    current = current->prev;
-
-    while(current != nullptr){
-        std::cout<<current->data<<" -> ";
-        current = current->prev;
-    }
-
-    std::cout<<std::endl;
+    std::cout << "NULL" << std::endl;
 }
 
-void PrintListReverse(Node* head){
-    Node* current = head;
-
-    while(current != nullptr){
-        std::cout<<current->data<<" -> ";
-        current = current->next;
-    }
-
-    std::cout<<std::endl;
-
-    //Para este punto ya estoy al final de la lista
-    current = current->prev;
-
-    while(current != nullptr){
-        std::cout<<current->data<<" -> ";
-        current = current->prev;
-    }
-
-    std::cout<<std::endl;
-}
-
-void FreeList(Node*& head){
-    while(head != nullptr){
+// Liberación adecuada de toda la memoria reservada en la lista
+void FreeList(Node*& head) {
+    while (head != nullptr) {
         Node* temp = head;
         head = head->next;
         delete temp;
     }
+    std::cout << "Memoria liberada correctamente.\n";
 }
 
-void DeleteValue(Node*& head, int value){
-
-    if(head == nullptr){
-        return;
-    }
-
-    //Si el elemento esta en el primer nodo
-    if(head->data == value){
-        Node* temp = head;
-        head=head->next;
-
-        if(head != nullptr){
-            head->prev = nullptr;
-        }
-
-        delete temp;
-        return;
-    }
-    
-    Node* current = head;
-
-    while(
-        current->next != nullptr &&
-        current->next->data != value
-    ){
-        current=current->next;
-    }
-
-    //Si el nodo es encontrado hay que eliminarlo
-    if(current->next != nullptr){
-        Node* temp = current->next;
-        current->next = current->next->next;
-
-        if(current->next != nullptr){
-            //El anterior del siguiente de current debe ser current
-            current->next->prev = current;
-        }
-
-        delete temp;
-    }
-
-}
-
-int main(){
-    Node* lista1 = nullptr;
-    Node* lista2 = nullptr;
-
+int main() {
+    Node* lista = nullptr;
     int option = 0;
 
-    do{
-        std::cout<<"1. Insertar al inicio"<<std::endl;
-        std::cout<<"2. Insertar al final"<<std::endl;
-        std::cout<<"3. Imprimir lista"<<std::endl;
-        std::cout<<"4. Liberar memoria"<<std::endl;
-        std::cout<<"5. Eliminar valor"<<std::endl;
-        std::cout<<"6. Imprimir hacia atras"<<std::endl;
-         std::cout<<"7.Consultar el siguente valor para eliminar"<<std::endl;
-        std::cin>>option;
+    do {
+        std::cout << "\n--- MENU DE OPCIONES ---\n";
+        std::cout << "1. Insertar elemento (Push)\n";
+        std::cout << "2. Eliminar ultimo elemento insertado (Pop)\n";
+        std::cout << "3. Consultar proximo elemento a eliminar (Peek)\n";
+        std::cout << "4. Imprimir lista\n";
+        std::cout << "5. Liberar memoria y salir\n";
+        std::cout << "Ingrese una opcion: ";
+        std::cin >> option;
 
-        switch(option){
-            case 1:{
+        switch (option) {
+            case 1: {
                 int n;
-                std::cout<<"Ingrese un numero: ";
-                std::cin>>n;
-
-                Insert(lista1, n);
-
+                std::cout << "Ingrese un numero int: ";
+                std::cin >> n;
+                Push(lista, n);
                 break;
             }
-            case 2:{
-                int n;
-                std::cout<<"Ingrese un numero: ";
-                std::cin>>n;
-
-                InsertAtEnd(lista1, n);
-
+            case 2: {
+                Pop(lista);
                 break;
             }
-            case 3:{
-                PrintList(lista1);
+            case 3: {
+                Peek(lista);
                 break;
             }
-            case 4:{
-                std::cout<<"Liberando memoria..."<<std::endl;
-                FreeList(lista1);
+            case 4: {
+                PrintList(lista);
                 break;
             }
-            case 5:{
-                int n;
-                std::cout<<"Ingrese un numero: ";
-                std::cin>>n;
-                DeleteValue(lista1, n);
+            case 5: {
+                FreeList(lista);
+                std::cout << "Saliendo del programa..." << std::endl;
                 break;
             }
-            case 6:{
-                PrintListReverse(lista1);
-                break;
-            }
-             case 7:{
-                PrintlastWorth(lista1);
-                break;
-            }
-            default:{
-                std::cout<<"Opcion invalida"<<std::endl;
+            default: {
+                std::cout << "Opcion invalida. Intente de nuevo.\n";
                 break;
             }
         }
-    }while(option != 100);
-
+    } while (option != 5);
 
     return 0;
 }

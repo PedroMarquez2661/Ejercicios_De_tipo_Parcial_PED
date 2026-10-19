@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/MINEDUCYT/Desktop/Ejercicios_De_tipo_Parcial_PED/punteros",
-      "program": "c:/Users/MINEDUCYT/Desktop/Ejercicios_De_tipo_Parcial_PED/punteros/build/Debug/outDebug",
+      "cwd": "c:/Users/MINEDUCYT/Desktop/Ejercicios_De_tipo_Parcial_PED/EjerciciosRecursividad",
+      "program": "c:/Users/MINEDUCYT/Desktop/Ejercicios_De_tipo_Parcial_PED/EjerciciosRecursividad/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
